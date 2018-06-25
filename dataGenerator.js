@@ -2,7 +2,8 @@ const faker = require('faker');
 const pgp = require('pg-promise')();
 const Promise = require('bluebird');
 const fs = require('fs');
-
+const cassandra = require('cassandra-driver');
+const client = new cassandra.Client({ contactPoints: ['localhost'] })
 
 const db = pgp(process.env.DATABASE_URL || 'postgres://localhost:5432/restaurant');
 
@@ -80,11 +81,9 @@ const randomNumber = (min, max) => {
 };
 
 const makeTable = () => {
-  //diningTable
   for (let a = 0; a < diningOptionArray.length; a++) {
     db.none(`INSERT INTO dining_style VALUES ('${a + 1}', '${diningOptionArray[a]}')`).catch((err) => console.log(err))
   }
-
   for (let b = 0; b < cuisineOptionArray.length; b++) {
     db.none(`INSERT INTO cuisine VALUES ('${b + 1}', '${cuisineOptionArray[b]}')`);
   }
@@ -124,11 +123,65 @@ let tag = [];
 let string = '';
 let paymentStr = '';
 let tagStr = '';
+let voteNumber = 0;
+let noSqlStr = '';
+let noSqlTag = {};
 
-const writeData = () => {
-  for (let k = 0; k < 10; k ++) {
-    for (let i = 0; i < 100000; i ++) {
-      id = (100000 * k) + i;
+
+// let createFK = `CREATE KEYSPACE IF NOT EXISTS abletableKey WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 3}`
+
+// client.execute(createFK, (err, result) => {
+//   if(err) {
+//     console.log(err, 'error during making key space')
+//   } else {
+//     console.log('keyspace is created');
+//   }
+// });
+
+// let createTable = `CREATE TABLE IF NOT EXISTS abletableKey.restaurants 
+//   (id int, 
+//   name text, 
+//   description text,
+//   dining_style text,
+//   cuisine text,
+//   breakfast_hours text,
+//   lunch_hours text,
+//   dinner_hours text,
+//   phone_number text,
+//   website text, 
+//   dress_code text,
+//   chef text,
+//   lat decimal,
+//   lng decimal,
+//   adress text,
+//   neighborhood text,
+//   croess_street text,
+//   parking text,
+//   public_transit text,
+//   payment list<text>,
+//   tag map<text, int>,
+//   PRIMARY KEY(id)
+//   )`
+
+
+// client.execute(createTable, (err, result) => {
+//   if(err) {
+//     console.log(err, 'error during making table')
+//   } else {
+//     console.log('table is created');
+//   }
+// });
+
+let insert = '';
+let rows = [];
+
+const writeData = (num) => {
+  let batches = [];
+
+  for (let k = 0; k < 1; k ++) {
+    rows = [];
+    for (let i = 0; i < 1; i ++) {
+      id = ((10 * k) + i + 1) + (1000 * num);
       restaurantName = faker.lorem.words();
       description = faker.lorem.sentence();
       diningStyle = diningOptionArray[randomNumber(1, diningOptionArray.length)];
@@ -147,32 +200,52 @@ const writeData = () => {
       publicTransit = faker.lorem.sentence();
       tag = tagOptionArray.slice(-(randomNumber(0, tagOptionArray.length)));
 
+      
       string += `${id}|${restaurantName}|${description}|${diningOption[diningStyle]}|${cuisineOption[cuisine]}|${breakfastTime}|${lunchTime}|${dinnerTime}|${phoneNumber}|${website}|${dressCodeOption[dressCode]}|${chef}|${lat}|${lng}|${address}|${neighborhood}|${crossStreet}|${parking}|${publicTransit}\n`;
 
-      for (let j = 0; j < payment.length; j ++) {
-        paymentStr += `${id}|${paymentOption[payment[j]]}\n`;
-      }
+      console.log(string);
+      
+      // for (let j = 0; j < payment.length; j ++) {
+      //   paymentStr += `${id}|${paymentOption[payment[j]]}\n`;
+      // }
       for (let l = 0; l < tag.length; l ++) {
-        tagStr += `${id}|${tagOption[tag[l]]}|${randomNumber(0, 50)}\n`
+        voteNumber = randomNumber(0, 50);
+        // tagStr += `${id}|${tagOption[tag[l]]}|${voteNumber}\n`
+        noSqlTag[tag[l]] = voteNumber;
       }          
+      // noSqlStr = `${id},'${restaurantName}','${description}','${diningStyle}','${cuisine}','${breakfastTime}','${lunchTime}','${dinnerTime}','${phoneNumber}','${website}','${dressCode}','${chef}',${lat},${lng},'${address}','${neighborhood}','${crossStreet}','${parking}','${publicTransit}',[${payment}],${JSON.stringify(noSqlTag)}\n`;
+      insert = `{"id":${id},"name": "${restaurantName}","description": "${description}","dining_style": "${diningStyle}","cuisine": "${cuisine}","breakfast_hours": "${breakfastTime}","lunch_hours": "${lunchTime}","dinner_hours": "${dinnerTime}","phone_number": "${phoneNumber}","website": "${website}","dress_code": "${dressCode}","chef": "${chef}","lat": ${lat},"lng": ${lng},"adress": "${address}","neighborhood": "${neighborhood}","croess_street": "${crossStreet}","parking": "${parking}","public_transit": "${publicTransit}","payment": ${JSON.stringify(payment)},"tag": ${JSON.stringify(noSqlTag)}}\n`
+
+      // rows[i] = {query: `INSERT INTO abletableKey.restaurants JSON ?`, params: [insert]}
+
     }
-    fs.appendFileSync('restaurant.txt', string);
-    string = '';
-    fs.appendFileSync('paymentPerRestaurant.txt', paymentStr);
-    paymentStr = '';
-    fs.appendFileSync('tagPerRestaurant.txt', tagStr);
-    tagStr = '';
+    // batches.push(client.batch(rows, {prepare: true}));
+
+    // console.log(noSqlTag);
+    // if (k < 500) {
+    //   fs.appendFileSync('restaurant1.txt', string);
+    //   string = '';
+    //   fs.appendFileSync('paymentPerRestaurant1.txt', paymentStr);
+    //   paymentStr = '';
+    //   fs.appendFileSync('tagPerRestaurant1.txt', tagStr);
+    //   tagStr = '';
+    // } else {
+    //   fs.appendFileSync('restaurant2.txt', string);
+    //   string = '';
+    //   fs.appendFileSync('paymentPerRestaurant2.txt', paymentStr);
+    //   paymentStr = '';
+    //   fs.appendFileSync('tagPerRestaurant2.txt', tagStr);
+    //   tagStr = '';
+    // }
   }
+  // Promise.all(batches).then(() => num < (10000 - 1) ? writeData(num+1) : client.shutdown());
+  
 };
 
-makeTable();
-console.log('table is done?');
+// makeTable();
+// console.log('table is done');
 
-// console.time('10M-elements');
-// writeData();
-// console.timeEnd('10M-elements');
-// console.log('making data is done?');
-
-
-
+// console.time('1M-elements');
+writeData(0);
+// console.timeEnd('1M-elements');
 

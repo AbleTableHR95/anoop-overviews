@@ -10,13 +10,17 @@
   "scripts": {
     "start": "node server/index.js",
     "build": "webpack -d --watch",
-    "test": "jest"
+    "test": "jest",
+    "seeding": "npm run seeding1 && npm run seeding2",
+    "seeding1": "psql restaurant < seeding.sql & psql restaurant < seeding2.sql",
+    "seeding2": "psql restaurant < seeding3.sql & psql restaurant < seeding4.sql & psql restaurant < seeding5.sql & psql restaurant < seeding6.sql"
   },
   "dependencies": {
     "autoprefixer": "^8.6.0",
     "axios": "^0.18.0",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.3",
+    "cassandra-driver": "^3.5.0",
     "express": "^4.16.3",
     "faker": "^4.1.0",
     "file-loader": "^1.1.11",

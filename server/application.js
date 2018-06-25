@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const db = require('../database/index');
+const dbC = require('../database/cassandra.js');
 
 const app = express();
 
@@ -20,18 +21,24 @@ app.get('/overviews/restaurant/:restaurantId/overview', (req, res) => {
   });
 });
 
-app.post('/overviews/restaurant/:restaurantId/add', (req,res) => {
-  res.send('response for post request')
+app.post('/overviews/restaurant/:restaurantId/add', (req, res) => {
+  const id = req.url.split('/')[3];
+  const tag = 'Good for a date';
+  const count = 25;
+  console.log(dbC.add());
 
+  dbC.add(id, tag, count)
+    .then(data => res.send(data.rows))
+    .catch(err => res.send(err));
+  // res.send(id);
 });
 
 app.put('/overviews/restaurant/:restaurantId/change', (req, res) => {
-  res.send('response for put request')
+  res.send('response for put request');
 });
 
 app.delete('/overviews/restaurant/:restaurantId/delete', (req, res) => {
-  res.send('response for delete request')
-
+  res.send('response for delete request');
 });
 
 module.exports = app;

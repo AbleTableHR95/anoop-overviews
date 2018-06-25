@@ -15,4 +15,4 @@ googleMaps.config.js
 .vscode/
 
 ##fakeData
-.txt
+*.txt
