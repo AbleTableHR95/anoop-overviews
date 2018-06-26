@@ -22,7 +22,7 @@ class Overview extends React.Component {
     axios.get(`/overviews/restaurant/${this.props.match.params.restaurantId}/overview`)
       .then((response) => {
         this.setState({
-          restaurant: response.data[0],
+          restaurant: response.data,
         });
       })
       .catch(err => console.error(err));

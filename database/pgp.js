@@ -11,19 +11,19 @@ const add = (tagArr, paymentArr) => {
       db.none(restaurantQuery);
     })
     .then(() => {
-      for(let i = 0; i < tagArr.length; i ++) {
+      for (let i = 0; i < tagArr.length; i++) {
         db.none(`insert into tag_per_restaurant values (${id},${tagArr[i]},0)`);
       }
     })
     .then(() => {
-      for(let j = 0; j < paymentArr.length; j++) {
+      for (let j = 0; j < paymentArr.length; j++) {
         db.none(`insert into payment_per_restaurant values (${id}, ${paymentArr[j]})`);
       }
     });
 };
 
 const find = (id) => {
-  let query = `select r.id, r.name, r.description, ds.style_name,c.cuisine_name,r.breakfast_hours, r.lunch_hours, r.dinner_hours, r.phone_number, d.dress_code, r.chef, r.lat, r.lng, r.address, r.neighborhood, r.cross_street, r.parking, r.public_transit, tpr.vote, t.tag, p.payment_option
+  const query = `select r.id, r.name, r.description, ds.style_name,c.cuisine_name,r.breakfast_hours, r.lunch_hours, r.dinner_hours, r.phone_number, r.website, d.dress_code, r.chef, r.lat, r.lng, r.address, r.neighborhood, r.cross_street, r.parking, r.public_transit, tpr.vote, t.tag, p.payment_option
   from restaurant r
   inner join tag_per_restaurant tpr
   on tpr.restaurant_id=r.id
@@ -39,13 +39,24 @@ const find = (id) => {
   on ds.id=r.dining_style_id
   inner join cuisine c
   on c.id=r.cuisine_id
-  where r.id=${id}`
-  
+  where r.id=${id}`;
+
   return db.many(query);
+};
 
-}
+const change = (id, tag, count) => {
+  const query = `update tag_per_restaurant set vote=${count} where restaurant_id=${id} and tag_id=(select id from tag where tag='${tag}')`;
+  // console.log(query);
+  return db.none(query).catch(err => console.log(err));
+};
 
+const del = () => db.one('select id from restaurant order by id DESC limit 1')
+  .then((data) => {
+    // console.log(data.id);
+    let query = `delete from restaurant where id=${data.id}`;
+    db.none(query);
+  });
 
 module.exports = {
-  add, find,
+  add, find, change, del,
 };
