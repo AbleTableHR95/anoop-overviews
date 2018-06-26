@@ -1,10 +1,10 @@
 const faker = require('faker');
-const pgp = require('pg-promise')();
 const Promise = require('bluebird');
 const fs = require('fs');
 const cassandra = require('cassandra-driver');
 const client = new cassandra.Client({ contactPoints: ['localhost'] })
 
+const pgp = require('pg-promise')();
 const db = pgp(process.env.DATABASE_URL || 'postgres://localhost:5432/restaurant');
 
 const diningOptionArray = ['Casual Dining', 'Casual Elegant', 'Fast Casual', 'Family Style', 'Fine Dining', 'Café or Bistro', 'Pop Up Restaurant'];
@@ -246,6 +246,6 @@ const writeData = (num) => {
 // console.log('table is done');
 
 // console.time('1M-elements');
-writeData(0);
+// writeData(0);
 // console.timeEnd('1M-elements');
 

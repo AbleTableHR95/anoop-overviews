@@ -18,7 +18,6 @@ app.get('/overviews/restaurant/:restaurantId/overview', (req, res) => {
   const tag = {};
   db.find(id)
     .then((data) => {
-      // console.log(data[0]);
       returnData.rest_id = data[0].id;
       returnData.rest_name = data[0].name.trim();
       returnData.description = data[0].description.trim();
@@ -49,7 +48,6 @@ app.get('/overviews/restaurant/:restaurantId/overview', (req, res) => {
       for (const key in tag) {
         returnData.tags.push({ tagName: key, voteCount: tag[key] });
       }
-      // console.log(returnData.tags);
       res.send(returnData);
     })
     .catch(err => res.send(err));

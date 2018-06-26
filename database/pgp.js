@@ -5,20 +5,24 @@ const db = pgp(process.env.DATABASE_URL || 'postgres://localhost:5432/restaurant
 const add = (tagArr, paymentArr) => {
   let id;
   const restaurantQuery = 'insert into restaurant (name,description,dining_style_id,cuisine_id,breakfast_hours,lunch_hours,dinner_hours,phone_number,website,dress_code_id,chef,lat,lng,address,neighborhood,cross_street,parking,public_transit) values (\'occaecati asperiores sed\',\'Et earum aut libero ipsa id reiciendis.\',4,10,\'Breakfast: Daily 6:30am - 11:30am\',\'Lunch: Daily 11:30am - 2:30pm\',\'Tuesday through Saturday 6:00pm - 10:00pm\',\'276-758-7459\',\'http://shanna.com\',5,\'Gavin Shriver\',-49.0699,-37.5741,\'et dolores corrupti, FL 41875\',\'enim ab est\',\'vero at et\',\'Eos rerum minima vel ut quisquam repellendus et nesciunt.\',\'Consequuntur maiores aliquid dignissimos et quam distinctio ut temporibus quia.\')';
-  return db.one('select id from restaurant order by id DESC limit 1')
-    .then((data) => {
-      id = data.id + 1;
-      db.none(restaurantQuery);
-    })
+
+
+  return db.none(restaurantQuery)
     .then(() => {
-      for (let i = 0; i < tagArr.length; i++) {
-        db.none(`insert into tag_per_restaurant values (${id},${tagArr[i]},0)`);
-      }
-    })
-    .then(() => {
-      for (let j = 0; j < paymentArr.length; j++) {
-        db.none(`insert into payment_per_restaurant values (${id}, ${paymentArr[j]})`);
-      }
+      db.one('select id from restaurant order by id DESC limit 1')
+        .then((data) => {
+          id = data.id;
+        })
+        .then(() => {
+          for (let i = 0; i < tagArr.length; i++) {
+            db.none(`insert into tag_per_restaurant values (${id},${tagArr[i]},0)`);
+          }
+        })
+        .then(() => {
+          for (let j = 0; j < paymentArr.length; j++) {
+            db.none(`insert into payment_per_restaurant values (${id}, ${paymentArr[j]})`);
+          }
+        });
     });
 };
 
@@ -53,7 +57,7 @@ const change = (id, tag, count) => {
 const del = () => db.one('select id from restaurant order by id DESC limit 1')
   .then((data) => {
     // console.log(data.id);
-    let query = `delete from restaurant where id=${data.id}`;
+    const query = `delete from restaurant where id=${data.id}`;
     db.none(query);
   });
 
