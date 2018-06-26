@@ -1,0 +1,51 @@
+const pgp = require('pg-promise')();
+
+const db = pgp(process.env.DATABASE_URL || 'postgres://localhost:5432/restaurant');
+
+const add = (tagArr, paymentArr) => {
+  let id;
+  const restaurantQuery = 'insert into restaurant (name,description,dining_style_id,cuisine_id,breakfast_hours,lunch_hours,dinner_hours,phone_number,website,dress_code_id,chef,lat,lng,address,neighborhood,cross_street,parking,public_transit) values (\'occaecati asperiores sed\',\'Et earum aut libero ipsa id reiciendis.\',4,10,\'Breakfast: Daily 6:30am - 11:30am\',\'Lunch: Daily 11:30am - 2:30pm\',\'Tuesday through Saturday 6:00pm - 10:00pm\',\'276-758-7459\',\'http://shanna.com\',5,\'Gavin Shriver\',-49.0699,-37.5741,\'et dolores corrupti, FL 41875\',\'enim ab est\',\'vero at et\',\'Eos rerum minima vel ut quisquam repellendus et nesciunt.\',\'Consequuntur maiores aliquid dignissimos et quam distinctio ut temporibus quia.\')';
+  return db.one('select id from restaurant order by id DESC limit 1')
+    .then((data) => {
+      id = data.id + 1;
+      db.none(restaurantQuery);
+    })
+    .then(() => {
+      for(let i = 0; i < tagArr.length; i ++) {
+        db.none(`insert into tag_per_restaurant values (${id},${tagArr[i]},0)`);
+      }
+    })
+    .then(() => {
+      for(let j = 0; j < paymentArr.length; j++) {
+        db.none(`insert into payment_per_restaurant values (${id}, ${paymentArr[j]})`);
+      }
+    });
+};
+
+const find = (id) => {
+  let query = `select r.id, r.name, r.description, ds.style_name,c.cuisine_name,r.breakfast_hours, r.lunch_hours, r.dinner_hours, r.phone_number, d.dress_code, r.chef, r.lat, r.lng, r.address, r.neighborhood, r.cross_street, r.parking, r.public_transit, tpr.vote, t.tag, p.payment_option
+  from restaurant r
+  inner join tag_per_restaurant tpr
+  on tpr.restaurant_id=r.id
+  inner join tag t
+  on tpr.tag_id=t.id
+  inner join dress_code d
+  on d.id=r.dress_code_id
+  inner join payment_per_restaurant ppr
+  on ppr.restaurant_id=r.id
+  inner join payment p
+  on p.id=ppr.payment_id
+  inner join dining_style ds
+  on ds.id=r.dining_style_id
+  inner join cuisine c
+  on c.id=r.cuisine_id
+  where r.id=${id}`
+  
+  return db.many(query);
+
+}
+
+
+module.exports = {
+  add, find,
+};
