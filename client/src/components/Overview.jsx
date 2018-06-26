@@ -21,7 +21,6 @@ class Overview extends React.Component {
   getInitialData() {
     axios.get(`/overviews/restaurant/${this.props.match.params.restaurantId}/overview`)
       .then((response) => {
-        // console.log(response.data);
         this.setState({
           restaurant: response.data,
         });
@@ -39,7 +38,6 @@ class Overview extends React.Component {
 
   render() {
     if (this.state.restaurant.name !== 'QueryResultError' && Object.keys(this.state.restaurant).length !== 0) {
-      console.log(this.state.restaurant.name);
       return (
         <div className={`card border-0 rounded-0 ${styles.overviewMod}`}>
           <div className={`card-body ${styles['card-body']}`}>
