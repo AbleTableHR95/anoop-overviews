@@ -6,12 +6,12 @@ const db = require('../database/pgp.js');
 
 const app = express();
 
-app.use('/restaurant/:restaurantId', express.static(path.join(__dirname, '../public/index.html')));
-app.use('/overviewsBundle.js', express.static(path.join(__dirname, '../public/dist/bundle.js')));
-app.use('/images/star-rating.png', express.static(path.join(__dirname, '../public/images/star-rating.png')));
+app.use('/restaurant/:restaurantId', express.static(path.join(__dirname, '../public')));
+// app.use('/overviewsBundle.js', express.static(path.join(__dirname, '../public/dist/bundle.js')));
+// app.use('/images/star-rating.png', express.static(path.join(__dirname, '../public/images/star-rating.png')));
 
-app.get('/overviews/restaurant/:restaurantId/overview', (req, res) => {
-  const id = req.url.split('/')[3];
+app.get('/restaurant/:restaurantId/overview', (req, res) => {
+  const id = req.url.split('/')[2];
   const returnData = {
  tags: [], payment_options: [], hours_of_operation: {}, location: {} 
 };
@@ -67,7 +67,7 @@ app.get('/overviews/restaurant/:restaurantId/overview', (req, res) => {
   // });
 });
 
-app.post('/overviews/restaurant/:restaurantId/overview', (req, res) => {
+app.post('/restaurant/:restaurantId/overview', (req, res) => {
   db.add([1, 3, 7], [1, 2])
     .then(() => res.send('check db'))
     .catch(err => res.send(err));
@@ -81,7 +81,7 @@ app.post('/overviews/restaurant/:restaurantId/overview', (req, res) => {
   //   });
 });
 
-app.put('/overviews/restaurant/:restaurantId/overview', (req, res) => {
+app.put('/restaurant/:restaurantId/overview', (req, res) => {
   const id = req.url.split('/')[3];
   const tag = 'Casual';
   const count = 666;
@@ -96,7 +96,7 @@ app.put('/overviews/restaurant/:restaurantId/overview', (req, res) => {
   //   .catch(err => res.send(err));
 });
 
-app.delete('/overviews/restaurant/:restaurantId/overview', (req, res) => {
+app.delete('/restaurant/:restaurantId/overview', (req, res) => {
   db.del().then(() => res.send('the last restaurant deleted')).catch(err => res.send(err));
 
   // for cassandra
