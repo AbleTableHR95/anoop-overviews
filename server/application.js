@@ -6,42 +6,48 @@ const db = require('../database/pgp.js');
 
 const app = express();
 
-// let restaurantIdCount = 10000000;
+app.use('/restaurant/:restaurantId', express.static(path.join(__dirname, '../public')));
+// app.use('/overviewsBundle.js', express.static(path.join(__dirname, '../public/dist/bundle.js')));
+// app.use('/images/star-rating.png', express.static(path.join(__dirname, '../public/images/star-rating.png')));
 
-app.use('/restaurant/:restaurantId', express.static(path.join(__dirname, '../public/index.html')));
-app.use('/overviewsBundle.js', express.static(path.join(__dirname, '../public/dist/bundle.js')));
-app.use('/images/star-rating.png', express.static(path.join(__dirname, '../public/images/star-rating.png')));
-
-app.get('/overviews/restaurant/:restaurantId/overview', (req, res) => {
-  const id = req.url.split('/')[3];
-  const returnData = {tag:{}, payment:[]};
-
+app.get('/restaurant/:restaurantId/overview', (req, res) => {
+  const id = req.url.split('/')[2];
+  const returnData = {
+ tags: [], payment_options: [], hours_of_operation: {}, location: {} 
+};
+  const tag = {};
   db.find(id)
     .then((data) => {
+      returnData.rest_id = data[0].id;
+      returnData.rest_name = data[0].name.trim();
+      returnData.description = data[0].description.trim();
+      returnData.dining_style = data[0].style_name.trim();
+      returnData.cuisine = data[0].cuisine_name.trim();
+      returnData.hours_of_operation.breakfast = data[0].breakfast_hours.trim();
+      returnData.hours_of_operation.lunch = data[0].lunch_hours.trim();
+      returnData.hours_of_operation.dinner = data[0].dinner_hours.trim();
+      returnData.website = data[0].website.trim();
+      returnData.phone_number = data[0].phone_number.trim();
+      returnData.dress_code = data[0].dress_code.trim();
+      returnData.executive_chef = data[0].chef.trim();
+      returnData.location.lat = Number(data[0].lat);
+      returnData.location.lng = Number(data[0].lng);
+      returnData.address = data[0].address.trim();
+      returnData.neighborhood = data[0].neighborhood.trim();
+      returnData.cross_street = data[0].cross_street.trim();
+      returnData.parking_details = data[0].parking.trim();
+      returnData.public_transit = data[0].public_transit.trim();
+      returnData.price_range = '$31 to $50';
       data.forEach((eachData) => {
-        returnData.id = eachData.id;
-        returnData.name = eachData.name;
-        returnData.description = eachData.description;
-        returnData.style_name = eachData.style_name;
-        returnData.cuisine_name = eachData.cuisine_name;
-        returnData.breakfast_hours = eachData.breakfast_hours;
-        returnData.lunch_hours = eachData.lunch_hours;
-        returnData.dinner_hours = eachData.dinner_hours;
-        returnData.phone_number = eachData.phone_number;
-        returnData.dress_code = eachData.dress_code;
-        returnData.chef = eachData.chef;
-        returnData.lat = eachData.lat;
-        returnData.lng = eachData.lng;
-        returnData.address = eachData.address;
-        returnData.neighborhood = eachData.neighborhood;
-        returnData.cross_street = eachData.cross_street;
-        returnData.parking = eachData.parking;
-        returnData.tag[eachData.tag] = eachData.vote;
-        if(!returnData.payment.includes(eachData.payment_option)) {
-          returnData.payment.push(eachData.payment_option);
+        tag[eachData.tag.trim()] = eachData.vote;
+        if (!returnData.payment_options.includes(eachData.payment_option.trim())) {
+          returnData.payment_options.push(eachData.payment_option.trim());
         }
       });
-      // console.log(returnData);
+      returnData.payment_options = returnData.payment_options.join(', ');
+      for (const key in tag) {
+        returnData.tags.push({ tagName: key, voteCount: tag[key] });
+      }
       res.send(returnData);
     })
     .catch(err => res.send(err));
@@ -61,7 +67,7 @@ app.get('/overviews/restaurant/:restaurantId/overview', (req, res) => {
   // });
 });
 
-app.post('/overviews/restaurant/:restaurantId/overview', (req, res) => {
+app.post('/restaurant/:restaurantId/overview', (req, res) => {
   db.add([1, 3, 7], [1, 2])
     .then(() => res.send('check db'))
     .catch(err => res.send(err));
@@ -75,24 +81,32 @@ app.post('/overviews/restaurant/:restaurantId/overview', (req, res) => {
   //   });
 });
 
-app.put('/overviews/restaurant/:restaurantId/overview', (req, res) => {
+app.put('/restaurant/:restaurantId/overview', (req, res) => {
   const id = req.url.split('/')[3];
-  const tag = 'Good for a Date';
-  const count = 25;
+  const tag = 'Casual';
+  const count = 666;
 
   db.change(id, tag, count)
-    .then(data => res.send(data))
+    .then(() => res.send(`check ${id}`))
     .catch(err => res.send(err));
+
+  // for cassandra
+  // db.change(id, tag, count)
+  //   .then(data => res.send(data))
+  //   .catch(err => res.send(err));
 });
 
-app.delete('/overviews/restaurant/:restaurantId/overview', (req, res) => {
-  db.del(restaurantIdCount)
-    .then((data) => {
-      console.log(restaurantIdCount, 'deleted id');
-      restaurantIdCount--;
-      res.send(data);
-    })
-    .catch(err => res.send(err));
+app.delete('/restaurant/:restaurantId/overview', (req, res) => {
+  db.del().then(() => res.send('the last restaurant deleted')).catch(err => res.send(err));
+
+  // for cassandra
+  // db.del(restaurantIdCount)
+  //   .then((data) => {
+  //     console.log(restaurantIdCount, 'deleted id');
+  //     restaurantIdCount--;
+  //     res.send(data);
+  //   })
+  //   .catch(err => res.send(err));
 });
 
 module.exports = app;

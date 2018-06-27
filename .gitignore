@@ -16,3 +16,7 @@ googleMaps.config.js
 
 ##fakeData
 *.txt
+
+##newrelic
+newrelic.js
+newrelic_agent.log

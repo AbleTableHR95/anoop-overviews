@@ -1,0 +1,15 @@
+config:
+  target: 'http://localhost:3003'
+  phases:
+    - duration: 1
+      arrivalRate: 100
+    # - duration: 60
+    #   arrivalRate: 5
+
+  defaults:
+    headers:
+      x-my-service-auth: '987401838271002188298567'
+scenarios:
+  - flow:
+    - delete:
+        url: "/restaurant/1234567/overview"
