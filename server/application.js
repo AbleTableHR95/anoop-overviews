@@ -22,7 +22,6 @@ app.get('/restaurant/:restaurantId/overview', (req, res) => {
   const tag = {};
   client.getAsync(id).then((data) => {
     if(data) {
-      // console.log('from redis');
       res.send(data);
     } else {
       db.find(id)
@@ -96,7 +95,7 @@ app.post('/restaurant/:restaurantId/overview', (req, res) => {
 });
 
 app.put('/restaurant/:restaurantId/overview', (req, res) => {
-  const id = req.url.split('/')[3];
+  const id = req.url.split('/')[2];
   const tag = 'Casual';
   const count = 666;
 

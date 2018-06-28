@@ -53,13 +53,13 @@ CREATE TABLE restaurant(
 );
 
 CREATE TABLE tag_per_restaurant(
-  restaurant_id integer REFERENCES restaurant(id),
+  restaurant_id integer REFERENCES restaurant(id) ON DELETE CASCADE,
   tag_id integer REFERENCES tag(id),
   vote integer
 );
 
 CREATE TABLE payment_per_restaurant(
-  restaurant_id integer REFERENCES restaurant(id),
+  restaurant_id integer REFERENCES restaurant(id) ON DELETE CASCADE,
   payment_id integer REFERENCES payment(id)
 );
 

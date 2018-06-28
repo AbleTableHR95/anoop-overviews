@@ -2,38 +2,31 @@ config:
   target: 'http://localhost:3003'
   phases:
     - duration: 60
-      arrivalRate: 10
-      rampTo: 100
-      name: 'warm up the application'
+      arrivalRate: 1
+      rampTo: 5
+      name: 'start lunch time'
     - duration: 120
-      arrivalRate: 100
-      name: 'sustained big load'
+      arrivalRate: 5
+      name: 'during lunch time'
     - duration: 60
-      arrivalRate: 100
-      rampTo: 50
-      name: calming down 
-    - duration: 120
-      arrivalRate: 50
-      name: 'staying calm'
-    - duration: 60
-      arrivalRate: 50
-      rampTo: 300
-      name: 'ready for dinner time'
-    - duration: 60
-      arrivalRate: 300
-      name: 'during dinner'
-    - duration : 60
-      arrivalRate: 300
+      arrivalRate: 5
       rampTo: 10
-      name: 'dinner done'
-    - duration : 60
+      name: 'start dinner time'
+    - duration: 120
       arrivalRate: 10
-      name: 'sleep'
+      name: 'during dinner time'
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 1
+      name: 'after dinner time'
 
   defaults:
     headers:
       x-my-service-auth: '987401838271002188298567'
+
 scenarios:
-  - flow:
-    - get:
-        url: "/restaurant/{{$randomNumber(1,9999842)}}/overview"
+    - flow:
+        - loop:
+            - get:
+                url: "/restaurant/{{$randomNumber(1, 10000)}}/overview"
+          count: 100
