@@ -1,12 +1,10 @@
 const express = require('express');
 const Promise = require('bluebird');
 const path = require('path');
-const redis = require('redis');
-// const db = require('../database/index');
-// const db = require('../database/cassandra.js');
+// const redis = require('redis');
 const db = require('../database/pgp.js');
-Promise.promisifyAll(redis);
-const client = redis.createClient();
+// Promise.promisifyAll(redis);
+// const client = redis.createClient();
 
 const app = express();
 
