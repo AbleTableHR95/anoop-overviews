@@ -20,10 +20,10 @@ app.get('/restaurant/:restaurantId/overview', (req, res) => {
  tags: [], payment_options: [], hours_of_operation: {}, location: {} 
 };
   const tag = {};
-  client.getAsync(id).then((data) => {
-    if(data) {
-      res.send(data);
-    } else {
+  // client.getAsync(id).then((data) => {
+  //   if(data) {
+  //     res.send(data);
+  //   } else {
       db.find(id)
         .then((data) => {
           returnData.rest_id = data[0].id;
@@ -62,8 +62,8 @@ app.get('/restaurant/:restaurantId/overview', (req, res) => {
           res.send(returnData);
         })
         .catch(err => res.send(err));
-    }
-  });
+  //   }
+  // });
 
   // for cassandra
   // db.find(id).then(data => res.send(data.rows)).catch(err => res.send(err));
