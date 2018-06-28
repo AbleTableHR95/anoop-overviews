@@ -2,10 +2,11 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.11.1
-      - image: circleci/mongo:3.6.5
+      - image: circleci/node:6.13.1
+      - image: circleci/postgres:10.4
+      - image: redis
     environment:
-      - MONGO_URL: "mongodb://localhost:27017/cavatable_menus"
+      - DATABASE_URL: "postgres://localhost:5432/restaurant"
     steps:
       - checkout
       - run: npm install
