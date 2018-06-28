@@ -1,18 +1,17 @@
-const faker = require('faker');
 const Promise = require('bluebird');
 const fs = require('fs');
 const cassandra = require('cassandra-driver');
 const client = new cassandra.Client({ contactPoints: ['localhost'] })
-
-const pgp = require('pg-promise')();
 const db = pgp(process.env.DATABASE_URL || 'postgres://localhost:5432/restaurant');
+const pgp = require('pg-promise')();
+
+const faker = require('faker');
 
 const diningOptionArray = ['Casual Dining', 'Casual Elegant', 'Fast Casual', 'Family Style', 'Fine Dining', 'Café or Bistro', 'Pop Up Restaurant'];
 const cuisineOptionArray = ['American', 'Italian', 'Steakhouse', 'Seafood', 'French', 'Indian', 'Mexican', 'Japanese', 'Chinese', 'German', 'Spanish', 'Pizzaria', 'Fusion / Eclectic', 'Tapas / Small Plates'];
 const paymentOptionArray = ['AMEX', 'Carte Blanche', 'Diners Club', 'Discover', 'JCB', 'Master Card', 'Visa'];
 const dressCodeOptionArray = ['Casual Dress', 'Casual', 'Smart Casual', 'Formal', 'Business Casual'];
 const tagOptionArray = ['Business meals', 'Great for Lunch', 'Banquet', 'Full Bar', 'Corkage Fee', 'Non-smoking', 'Wheelchair Access', 'Special Occasion', 'Good for a Date', 'Great for Dinner', 'Neighborhood Gem', 'Casual'];
-
 
 const cuisineOption = {
   American: '1',
