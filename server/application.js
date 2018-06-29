@@ -2,11 +2,10 @@ const express = require('express');
 const Promise = require('bluebird');
 const path = require('path');
 const redis = require('redis');
-// const db = require('../database/index');
-// const db = require('../database/cassandra.js');
 const db = require('../database/pgp.js');
 Promise.promisifyAll(redis);
-const client = redis.createClient();
+
+const client = redis.createClient(process.env.RES_PORT || '6379', process.env.RES_HOST || 'localhost');
 
 const app = express();
 
@@ -22,7 +21,6 @@ app.get('/restaurant/:restaurantId/overview', (req, res) => {
   const tag = {};
   client.getAsync(id).then((data) => {
     if(data) {
-      // console.log('from redis');
       res.send(data);
     } else {
       db.find(id)
@@ -66,9 +64,6 @@ app.get('/restaurant/:restaurantId/overview', (req, res) => {
     }
   });
 
-  // for cassandra
-  // db.find(id).then(data => res.send(data.rows)).catch(err => res.send(err));
-
   // original code from anoop!!
   // db.retrieve(req.params.restaurantId, (err, results) => {
   //   if (err && err.message.includes('Cast to number failed for value "NaN"')) {
@@ -86,17 +81,10 @@ app.post('/restaurant/:restaurantId/overview', (req, res) => {
     .then(() => res.send('check db'))
     .catch(err => res.send(err));
 
-  // for cassandra
-  // db.add(restaurantIdCount + 1)
-  //   .then((data) => {
-  //     restaurantIdCount += 1;
-  //     console.log(restaurantIdCount, 'added id');
-  //     res.send(data);
-  //   });
 });
 
 app.put('/restaurant/:restaurantId/overview', (req, res) => {
-  const id = req.url.split('/')[3];
+  const id = req.url.split('/')[2];
   const tag = 'Casual';
   const count = 666;
 
@@ -104,23 +92,11 @@ app.put('/restaurant/:restaurantId/overview', (req, res) => {
     .then(() => res.send(`check ${id}`))
     .catch(err => res.send(err));
 
-  // for cassandra
-  // db.change(id, tag, count)
-  //   .then(data => res.send(data))
-  //   .catch(err => res.send(err));
 });
 
 app.delete('/restaurant/:restaurantId/overview', (req, res) => {
   db.del().then(() => res.send('the last restaurant deleted')).catch(err => res.send(err));
 
-  // for cassandra
-  // db.del(restaurantIdCount)
-  //   .then((data) => {
-  //     console.log(restaurantIdCount, 'deleted id');
-  //     restaurantIdCount--;
-  //     res.send(data);
-  //   })
-  //   .catch(err => res.send(err));
 });
 
 module.exports = app;

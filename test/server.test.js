@@ -1,4 +1,3 @@
-// process.env.NODE_ENV = 'test';
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -11,9 +10,9 @@ chai.use(chaiHttp);
 describe('/GET restaurant', () => {
   it('it should return status code 200', (done) => {
     chai.request(server)
-      .get('/restaurant/1/overview')
+      .get('/restaurant/2/overview')
       .end((err, res) => {
-        // console.log(res.body,'res ');
+        // console.log(res.body);
         res.should.have.status(200);
         done();
       });
@@ -23,10 +22,41 @@ describe('/GET restaurant', () => {
       .get('/restaurant/1/overview')
       .end((err, res) => {
         res.body.should.be.a('object');
-        // console.log(res.body);
         done();
       });
-  });
-  
+  });  
 });
 
+describe('/POST restaurant', () => {
+  it('it should return status code 200', (done) => {
+    chai.request(server)
+      .post('/restaurant/1/overview')
+      .end((err, res) => {
+        // console.log(res.text)
+        res.should.have.status(200);
+        done();
+      });
+  });  
+});
+
+describe('/PUT restaurant', () => {
+  it('it should return status code 200', (done) => {
+    chai.request(server)
+      .put('/restaurant/1/overview')
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
+      });
+  });  
+});
+
+describe('/Delete restaurant', () => {
+  it('it should return status code 200', (done) => {
+    chai.request(server)
+      .delete('/restaurant/1/overview')
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
+      });
+  });  
+});
