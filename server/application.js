@@ -3,6 +3,7 @@ const Promise = require('bluebird');
 const path = require('path');
 const redis = require('redis');
 const db = require('../database/pgp.js');
+
 Promise.promisifyAll(redis);
 
 const client = redis.createClient(process.env.RES_PORT || '6379', process.env.RES_HOST || 'localhost');
@@ -16,11 +17,11 @@ app.use('/restaurant/:restaurantId', express.static(path.join(__dirname, '../pub
 app.get('/restaurant/:restaurantId/overview', (req, res) => {
   const id = req.url.split('/')[2];
   const returnData = {
- tags: [], payment_options: [], hours_of_operation: {}, location: {} 
-};
+    tags: [], payment_options: [], hours_of_operation: {}, location: {},
+  };
   const tag = {};
   client.getAsync(id).then((data) => {
-    if(data) {
+    if (data) {
       res.send(data);
     } else {
       db.find(id)
@@ -80,23 +81,23 @@ app.post('/restaurant/:restaurantId/overview', (req, res) => {
   db.add([1, 3, 7], [1, 2])
     .then(() => res.send('check db'))
     .catch(err => res.send(err));
-
 });
 
 app.put('/restaurant/:restaurantId/overview', (req, res) => {
   const id = req.url.split('/')[2];
   const tag = 'Casual';
   const count = 666;
-
+  
+  client.del(`${id}`);
   db.change(id, tag, count)
-    .then(() => res.send(`check ${id}`))
+    .then(() => {
+      res.send(`check ${id}`);
+    })
     .catch(err => res.send(err));
-
 });
 
 app.delete('/restaurant/:restaurantId/overview', (req, res) => {
   db.del().then(() => res.send('the last restaurant deleted')).catch(err => res.send(err));
-
 });
 
 module.exports = app;

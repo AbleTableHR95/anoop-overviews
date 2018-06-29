@@ -1,6 +1,13 @@
 const pgp = require('pg-promise')();
 
-const db = pgp(process.env.DATABASE_URL || 'postgres://localhost:5432/restaurant');
+
+const db = pgp({
+  host: process.env.DB_host || 'localhost',
+  port: process.env.DB_port || 5432,
+  database: process.env.DB_database || 'restaurant',
+  user: process.env.DB_user,
+});
+
 
 const add = (tagArr, paymentArr) => {
   let id;
