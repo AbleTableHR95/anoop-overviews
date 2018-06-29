@@ -10,8 +10,9 @@ chai.use(chaiHttp);
 describe('/GET restaurant', () => {
   it('it should return status code 200', (done) => {
     chai.request(server)
-      .get('/restaurant/1/overview')
+      .get('/restaurant/2/overview')
       .end((err, res) => {
+        // console.log(res.body);
         res.should.have.status(200);
         done();
       });

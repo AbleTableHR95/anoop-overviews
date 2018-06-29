@@ -28,5 +28,5 @@ scenarios:
     - flow:
         - loop:
             - get:
-                url: "/restaurant/{{$randomNumber(1, 10000)}}/overview"
+                url: "/restaurant/{{$randomNumber(1, 1000)}}/overview"
           count: 100
