@@ -4,6 +4,5 @@
  *   psql restaurant <seeding.sql
 */
 
-\COPY restaurant FROM './restaurant1.txt' DELIMITER '|' 
--- \COPY payment_per_restaurant FROM './paymentPerRestaurant.txt' DELIMITER '|'
--- \COPY tag_per_restaurant FROM './tagPerRestaurant.txt' DELIMITER '|'
+\COPY restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/restaurant1.txt' DELIMITER '|' 
+

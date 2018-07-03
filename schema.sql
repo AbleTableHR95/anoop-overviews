@@ -1,4 +1,4 @@
--- DROP DATABASE IF EXISTS restaurant;
+DROP DATABASE IF EXISTS restaurant;
 
 CREATE DATABASE restaurant;
 
@@ -122,7 +122,15 @@ CREATE TABLE payment_per_restaurant(
   payment_id integer REFERENCES payment(id)
 );
 
-CREATE INDEX payment_per_restaurant_restaurant_id_idx ON payment_per_restaurant (restaurant_id);
+CREATE INDEX payment_per_restaurant_restaurant_id_idx ON payment_per_restaurant (restaurant_id)
+
+-- \COPY restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/restaurant1.txt' DELIMITER '|'
+-- \COPY restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/restaurant2.txt' DELIMITER '|'
+-- \COPY tag_per_restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/tagPerRestaurant1.txt' DELIMITER '|'
+-- \COPY tag_per_restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/tagPerRestaurant2.txt' DELIMITER '|'
+-- \COPY payment_per_restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/paymentPerRestaurant1.txt' DELIMITER '|'
+-- \COPY payment_per_restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/paymentPerRestaurant2.txt' DELIMITER '|'
+
 
 
 

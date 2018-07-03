@@ -7,6 +7,7 @@ const should = chai.should();
 
 chai.use(chaiHttp);
 
+
 describe('/GET restaurant', () => {
   it('it should return status code 200', (done) => {
     chai.request(server)
@@ -27,17 +28,6 @@ describe('/GET restaurant', () => {
   });  
 });
 
-describe('/POST restaurant', () => {
-  it('it should return status code 200', (done) => {
-    chai.request(server)
-      .post('/restaurant/1/overview')
-      .end((err, res) => {
-        // console.log(res.text)
-        res.should.have.status(200);
-        done();
-      });
-  });  
-});
 
 describe('/PUT restaurant', () => {
   it('it should return status code 200', (done) => {
@@ -50,13 +40,29 @@ describe('/PUT restaurant', () => {
   });  
 });
 
-describe('/Delete restaurant', () => {
+
+describe('/POST restaurant', () => {
   it('it should return status code 200', (done) => {
     chai.request(server)
-      .delete('/restaurant/1/overview')
+      .post('/restaurant/1/overview')
       .end((err, res) => {
+        console.log(res.text)
         res.should.have.status(200);
         done();
       });
+  });  
+
+});
+
+describe('/Delete restaurant', () => {
+  it('it should return status code 200', (done) => {
+    setTimeout(() => {
+      chai.request(server)
+        .delete('/restaurant/1/overview')
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    }, 500)
   });  
 });

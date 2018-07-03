@@ -2,8 +2,6 @@ const Promise = require('bluebird');
 const fs = require('fs');
 const cassandra = require('cassandra-driver');
 const client = new cassandra.Client({ contactPoints: ['localhost'] })
-const db = pgp(process.env.DATABASE_URL || 'postgres://localhost:5432/restaurant');
-const pgp = require('pg-promise')();
 
 const faker = require('faker');
 
@@ -79,24 +77,6 @@ const randomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
-const makeTable = () => {
-  for (let a = 0; a < diningOptionArray.length; a++) {
-    db.none(`INSERT INTO dining_style VALUES ('${a + 1}', '${diningOptionArray[a]}')`).catch((err) => console.log(err))
-  }
-  for (let b = 0; b < cuisineOptionArray.length; b++) {
-    db.none(`INSERT INTO cuisine VALUES ('${b + 1}', '${cuisineOptionArray[b]}')`);
-  }
-  for (let c = 0; c < paymentOptionArray.length; c++) {
-    db.none(`INSERT INTO payment VALUES ('${c + 1}', '${paymentOptionArray[c]}')`)
-  }
-  for(let d = 0; d < tagOptionArray.length; d++) {
-    db.none(`INSERT INTO tag VALUES ('${d + 1}', '${tagOptionArray[d]}')`)
-  }
-  for(let e = 0; e < dressCodeOptionArray.length; e++) {
-    db.none(`INSERT INTO dress_code VALUES ('${e + 1}', '${dressCodeOptionArray[e]}')`)
-  }
-}
-
 
 let id = 0;
 const breakfastTime = 'Breakfast: Daily 6:30am - 11:30am';
@@ -155,13 +135,6 @@ const writeData = (num) => {
       tag = tagOptionArray.slice(-(randomNumber(0, tagOptionArray.length)));
 
       
-      string += `${id}|${restaurantName}|${description}|${diningOption[diningStyle]}|${cuisineOption[cuisine]}|${breakfastTime}|${lunchTime}|${dinnerTime}|${phoneNumber}|${website}|${dressCodeOption[dressCode]}|${chef}|${lat}|${lng}|${address}|${neighborhood}|${crossStreet}|${parking}|${publicTransit}\n`;
-
-      console.log(string);
-      
-      for (let j = 0; j < payment.length; j ++) {
-        paymentStr += `${id}|${paymentOption[payment[j]]}\n`;
-      }
       for (let l = 0; l < tag.length; l ++) {
         voteNumber = randomNumber(0, 50);
         tagStr += `${id}|${tagOption[tag[l]]}|${voteNumber}\n`
@@ -175,31 +148,58 @@ const writeData = (num) => {
     }
     batches.push(client.batch(rows, {prepare: true}));
 
-    console.log(noSqlTag);
-    if (k < 500) {
-      fs.appendFileSync('restaurant1.txt', string);
-      string = '';
-      fs.appendFileSync('paymentPerRestaurant1.txt', paymentStr);
-      paymentStr = '';
-      fs.appendFileSync('tagPerRestaurant1.txt', tagStr);
-      tagStr = '';
-    } else {
-      fs.appendFileSync('restaurant2.txt', string);
-      string = '';
-      fs.appendFileSync('paymentPerRestaurant2.txt', paymentStr);
-      paymentStr = '';
-      fs.appendFileSync('tagPerRestaurant2.txt', tagStr);
-      tagStr = '';
-    }
   }
   Promise.all(batches).then(() => num < (10000 - 1) ? writeData(num+1) : client.shutdown());
   
 };
 
-makeTable();
-// console.log('table is done');
+
+const postgresData = () => {
+
+  for (let k = 0; k < 1000; k ++) {
+    for (let i = 0; i < 1000; i ++) {
+      id = (1000 * k) + i + 1;
+      restaurantName = faker.lorem.words();
+      description = faker.lorem.sentence();
+      diningStyle = diningOptionArray[randomNumber(1, diningOptionArray.length)];
+      cuisine = cuisineOptionArray[randomNumber(1, cuisineOptionArray.length)];
+      phoneNumber = faker.phone.phoneNumberFormat();
+      website = faker.internet.url();
+      payment = paymentOptionArray.slice(-(randomNumber(0, paymentOptionArray.length)));
+      dressCode = dressCodeOptionArray[randomNumber(1, dressCodeOptionArray.length)];
+      chef = faker.lorem.words();
+      lat = faker.address.latitude();
+      lng = faker.address.longitude();
+      address = `${faker.lorem.words()}, ${faker.address.stateAbbr()} ${faker.address.zipCode()}`;
+      neighborhood = faker.lorem.words();
+      crossStreet = faker.lorem.words();
+      parking = faker.lorem.sentence();
+      publicTransit = faker.lorem.sentence();
+      tag = tagOptionArray.slice(-(randomNumber(0, tagOptionArray.length)));
+ 
+      string += `${restaurantName}|${description}|${diningOption[diningStyle]}|${cuisineOption[cuisine]}|${breakfastTime}|${lunchTime}|${dinnerTime}|${phoneNumber}|${website}|${dressCodeOption[dressCode]}|${chef}|${lat}|${lng}|${address}|${neighborhood}|${crossStreet}|${parking}|${publicTransit}\n`;
+      
+      for (let j = 0; j < payment.length; j ++) {
+        paymentStr += `${id}|${paymentOption[payment[j]]}\n`;
+      }
+      for (let l = 0; l < tag.length; l ++) {
+        voteNumber = randomNumber(0, 50);
+        tagStr += `${id}|${tagOption[tag[l]]}|${voteNumber}\n`
+      }          
+
+    }    
+    fs.appendFileSync('restaurant.txt', string);
+    string = '';
+    fs.appendFileSync('paymentPerRestaurant.txt', paymentStr);
+    paymentStr = '';
+    fs.appendFileSync('tagPerRestaurant.txt', tagStr);
+    tagStr = '';
+  }
+};
+
+postgresData();
 
 // console.time('1M-elements');
-writeData(0);
+// writeData(0);
 // console.timeEnd('1M-elements');
 

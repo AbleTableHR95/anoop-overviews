@@ -20,3 +20,9 @@ googleMaps.config.js
 ##newrelic
 newrelic.js
 newrelic_agent.log
+
+docker-compose.yml
+coverage/
+.nyc_output/
+.dockerignore
+Dockerfile

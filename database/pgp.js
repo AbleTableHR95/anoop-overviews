@@ -2,10 +2,10 @@ const pgp = require('pg-promise')();
 
 
 const db = pgp({
-  host: process.env.DB_host || 'localhost',
-  port: process.env.DB_port || 5432,
-  database: process.env.DB_database || 'restaurant',
-  user: process.env.DB_user,
+  host: process.env.PG_HOST || 'localhost',
+  port: process.env.PG_PORT || 5432,
+  database: process.env.PG_DATABASE || 'restaurant',
+  user: process.env.PG_USER || 'postgres',
 });
 
 
@@ -22,15 +22,17 @@ const add = (tagArr, paymentArr) => {
         })
         .then(() => {
           for (let i = 0; i < tagArr.length; i++) {
-            db.none(`insert into tag_per_restaurant values (${id},${tagArr[i]},0)`);
+            db.none(`insert into tag_per_restaurant values (${id},${tagArr[i]},0)`).catch(err => console.log(err));
           }
         })
         .then(() => {
           for (let j = 0; j < paymentArr.length; j++) {
-            db.none(`insert into payment_per_restaurant values (${id}, ${paymentArr[j]})`);
+            db.none(`insert into payment_per_restaurant values (${id}, ${paymentArr[j]})`).catch(err => console.log(err, 'this one????'));
           }
-        });
-    });
+        })
+        .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
 };
 
 const find = (id) => {
@@ -52,7 +54,7 @@ const find = (id) => {
   on c.id=r.cuisine_id
   where r.id=${id}`;
 
-  return db.many(query);
+  return db.many(query).catch((err) => console.log(err));
 };
 
 const change = (id, tag, count) => {

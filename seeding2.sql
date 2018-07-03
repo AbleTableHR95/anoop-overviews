@@ -1,1 +1,3 @@
-\COPY restaurant FROM './restaurant2.txt' DELIMITER '|' 
+
+
+\COPY restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/restaurant2.txt' DELIMITER '|' 

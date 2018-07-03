@@ -3,6 +3,9 @@ const Promise = require('bluebird');
 const path = require('path');
 const redis = require('redis');
 const db = require('../database/pgp.js');
+const morgan = require('morgan');
+
+
 
 Promise.promisifyAll(redis);
 
@@ -10,11 +13,14 @@ const client = redis.createClient(process.env.RES_PORT || '6379', process.env.RE
 
 const app = express();
 
+app.use(morgan('dev'));
+
 app.use('/restaurant/:restaurantId', express.static(path.join(__dirname, '../public')));
 // app.use('/overviewsBundle.js', express.static(path.join(__dirname, '../public/dist/bundle.js')));
 // app.use('/images/star-rating.png', express.static(path.join(__dirname, '../public/images/star-rating.png')));
 
 app.get('/restaurant/:restaurantId/overview', (req, res) => {
+  console.log('got a get request');
   const id = req.url.split('/')[2];
   const returnData = {
     tags: [], payment_options: [], hours_of_operation: {}, location: {},
@@ -57,7 +63,7 @@ app.get('/restaurant/:restaurantId/overview', (req, res) => {
             returnData.tags.push({ tagName: key, voteCount: tag[key] });
           }
           // console.log('from db');
-          client.set(`${id}`, JSON.stringify(returnData), 'EX', 300);
+          client.setAsync(`${id}`, JSON.stringify(returnData), 'EX', 300).catch(err => console.log(err));
 
           res.send(returnData);
         })
