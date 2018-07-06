@@ -199,9 +199,6 @@ const postgresData = () => {
   }
 };
 
-// postgresData();
+postgresData();
 
-// console.time('1M-elements');
-// writeData(0);
-// console.timeEnd('1M-elements');
 

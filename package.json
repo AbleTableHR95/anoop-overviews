@@ -8,13 +8,11 @@
     "node": ">=6.13.0"
   },
   "scripts": {
-    "start-dev": "node server/index.js",
-    "start": "npm run build | npm run start-dev",
-    "build": "webpack -d --watch",
+    "start": "npm run build | node ./server/index.js",
+    "build": "webpack --mode production",
     "test": "nyc --reporter=html --reporter=text mocha --timeout 1000",
-    "seeding": "npm run seeding1 && npm run seeding2",
-    "seeding1": "psql restaurant < seeding.sql & psql restaurant < seeding2.sql",
-    "seeding2": "psql restaurant < seeding3.sql & psql restaurant < seeding4.sql & psql restaurant < seeding5.sql & psql restaurant < seeding6.sql"
+    "dev": "webpack -d --watch",
+    "dataGenerate": "node ./dataGenerator"
   },
   "dependencies": {
     "autoprefixer": "^8.6.0",
