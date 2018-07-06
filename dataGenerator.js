@@ -109,6 +109,7 @@ let noSqlTag = {};
 let insert = '';
 let rows = [];
 
+//dataGenerator for cassandra
 const writeData = (num) => {
   let batches = [];
 
@@ -154,6 +155,7 @@ const writeData = (num) => {
 };
 
 
+//dataGenerator for postgres
 const postgresData = () => {
 
   for (let k = 0; k < 1000; k ++) {
@@ -197,7 +199,7 @@ const postgresData = () => {
   }
 };
 
-postgresData();
+// postgresData();
 
 // console.time('1M-elements');
 // writeData(0);

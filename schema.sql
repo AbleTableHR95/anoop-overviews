@@ -7,7 +7,7 @@ CREATE DATABASE restaurant;
 
 CREATE TABLE dining_style(
   id integer PRIMARY KEY,
-  style_name char(30)
+  style_name TEXT
 );
 
 INSERT INTO dining_style (id, style_name) VALUES
@@ -22,7 +22,7 @@ INSERT INTO dining_style (id, style_name) VALUES
 
 CREATE TABLE cuisine(
   id integer PRIMARY KEY,
-  cuisine_name char(30)
+  cuisine_name TEXT
 );
 
 INSERT INTO cuisine (id, cuisine_name) VALUES
@@ -43,7 +43,7 @@ INSERT INTO cuisine (id, cuisine_name) VALUES
 
 CREATE TABLE dress_code(
   id integer PRIMARY KEY,
-  dress_code char(30)
+  dress_code TEXT
 );
 
 INSERT INTO dress_code(id, dress_code) VALUES 
@@ -55,7 +55,7 @@ INSERT INTO dress_code(id, dress_code) VALUES
 
 CREATE TABLE tag(
   id integer PRIMARY KEY,
-  tag char(30)
+  tag TEXT
 );
 
 INSERT INTO tag(id, tag) VALUES 
@@ -75,7 +75,7 @@ INSERT INTO tag(id, tag) VALUES
 
 CREATE TABLE payment(
   id integer PRIMARY KEY,
-  payment_option char(20)
+  payment_option TEXT
 );
 
 INSERT INTO payment VALUES 
@@ -88,25 +88,25 @@ INSERT INTO payment VALUES
   (7, 'Visa');
 
 CREATE TABLE restaurant(
-  id integer PRIMARY KEY,
-  name char(50) not null, 
-  description char(300) not null,
+  id SERIAL PRIMARY KEY,
+  name TEXT not null, 
+  description TEXT not null,
   dining_style_id integer REFERENCES dining_style(id),
   cuisine_id integer REFERENCES cuisine(id),
-  breakfast_hours char(50) not null,
-  lunch_hours char(50) not null,
-  dinner_hours char(50) not null,
-  phone_number char(20) not null,
-  website char(30) not null,
+  breakfast_hours TEXT not null,
+  lunch_hours TEXT not null,
+  dinner_hours TEXT not null,
+  phone_number TEXT not null,
+  website TEXT not null,
   dress_code_id integer REFERENCES dress_code(id),
-  chef char(50) not null,
+  chef TEXT not null,
   lat decimal not null,
   lng decimal not null,
-  address char(100) not null,
-  neighborhood char(100) not null,
-  cross_street char(100) not null,
-  parking char(300) not null,
-  public_transit char(300) not null
+  address TEXT not null,
+  neighborhood TEXT not null,
+  cross_street TEXT not null,
+  parking TEXT not null,
+  public_transit TEXT not null
 );
 
 CREATE TABLE tag_per_restaurant(
@@ -122,18 +122,10 @@ CREATE TABLE payment_per_restaurant(
   payment_id integer REFERENCES payment(id)
 );
 
-CREATE INDEX payment_per_restaurant_restaurant_id_idx ON payment_per_restaurant (restaurant_id)
+CREATE INDEX payment_per_restaurant_restaurant_id_idx ON payment_per_restaurant (restaurant_id);
 
--- \COPY restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/restaurant1.txt' DELIMITER '|'
--- \COPY restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/restaurant2.txt' DELIMITER '|'
--- \COPY tag_per_restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/tagPerRestaurant1.txt' DELIMITER '|'
--- \COPY tag_per_restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/tagPerRestaurant2.txt' DELIMITER '|'
--- \COPY payment_per_restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/paymentPerRestaurant1.txt' DELIMITER '|'
--- \COPY payment_per_restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/paymentPerRestaurant2.txt' DELIMITER '|'
+\COPY restaurant (name, description, dining_style_id, cuisine_id, breakfast_hours,lunch_hours, dinner_hours, phone_number, website, dress_code_id, chef, lat, lng, address, neighborhood, cross_street, parking, public_transit) FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/restaurant.txt' DELIMITER '|';
+\COPY tag_per_restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/tagPerRestaurant.txt' DELIMITER '|';
+\COPY payment_per_restaurant FROM '/Users/jehwas/Desktop/AbleTable/jehwa-overviews/paymentPerRestaurant.txt' DELIMITER '|';
 
 
-
-
-/*  Execute this file from the command line by typing:
- *   psql dbname <schema.sql
-*/

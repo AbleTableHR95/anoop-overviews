@@ -15,6 +15,8 @@ const app = express();
 
 app.use(morgan('dev'));
 
+app.use('/loaderio-f53a7564e14de21b54e7e702a8184b94.txt', express.static(path.join(__dirname, '../public/loaderio-f53a7564e14de21b54e7e702a8184b94.txt')));
+
 app.use('/restaurant/:restaurantId', express.static(path.join(__dirname, '../public')));
 // app.use('/overviewsBundle.js', express.static(path.join(__dirname, '../public/dist/bundle.js')));
 // app.use('/images/star-rating.png', express.static(path.join(__dirname, '../public/images/star-rating.png')));
