@@ -6,7 +6,7 @@ import icons from '../icons.jsx';
 const ReviewsOverview = props => (
   <div id="reviewsOverviewComponent">
     <div className={styles.avgReviewContainer}>
-      <img src="/overviews/images/star-rating.png" alt="" width="70" height="30"></img>
+      <img src="overview/star-rating.png" alt="" width="70" height="30"></img>
       <span className={styles.avgReview}>4.5</span>
     </div>
     <div className={styles.totalReviewsContainer}>

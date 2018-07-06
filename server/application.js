@@ -3,24 +3,33 @@ const Promise = require('bluebird');
 const path = require('path');
 const redis = require('redis');
 const db = require('../database/pgp.js');
+const morgan = require('morgan');
+
+
+
 Promise.promisifyAll(redis);
 
 const client = redis.createClient(process.env.RES_PORT || '6379', process.env.RES_HOST || 'localhost');
 
 const app = express();
 
+app.use(morgan('dev'));
+
+app.use('/loaderio-f53a7564e14de21b54e7e702a8184b94.txt', express.static(path.join(__dirname, '../public/loaderio-f53a7564e14de21b54e7e702a8184b94.txt')));
+
 app.use('/restaurant/:restaurantId', express.static(path.join(__dirname, '../public')));
 // app.use('/overviewsBundle.js', express.static(path.join(__dirname, '../public/dist/bundle.js')));
 // app.use('/images/star-rating.png', express.static(path.join(__dirname, '../public/images/star-rating.png')));
 
 app.get('/restaurant/:restaurantId/overview', (req, res) => {
+  console.log('got a get request');
   const id = req.url.split('/')[2];
   const returnData = {
- tags: [], payment_options: [], hours_of_operation: {}, location: {} 
-};
+    tags: [], payment_options: [], hours_of_operation: {}, location: {},
+  };
   const tag = {};
   client.getAsync(id).then((data) => {
-    if(data) {
+    if (data) {
       res.send(data);
     } else {
       db.find(id)
@@ -56,7 +65,7 @@ app.get('/restaurant/:restaurantId/overview', (req, res) => {
             returnData.tags.push({ tagName: key, voteCount: tag[key] });
           }
           // console.log('from db');
-          client.set(`${id}`, JSON.stringify(returnData), 'EX', 300);
+          client.setAsync(`${id}`, JSON.stringify(returnData), 'EX', 300).catch(err => console.log(err));
 
           res.send(returnData);
         })
@@ -80,23 +89,23 @@ app.post('/restaurant/:restaurantId/overview', (req, res) => {
   db.add([1, 3, 7], [1, 2])
     .then(() => res.send('check db'))
     .catch(err => res.send(err));
-
 });
 
 app.put('/restaurant/:restaurantId/overview', (req, res) => {
   const id = req.url.split('/')[2];
   const tag = 'Casual';
   const count = 666;
-
+  
+  client.del(`${id}`);
   db.change(id, tag, count)
-    .then(() => res.send(`check ${id}`))
+    .then(() => {
+      res.send(`check ${id}`);
+    })
     .catch(err => res.send(err));
-
 });
 
 app.delete('/restaurant/:restaurantId/overview', (req, res) => {
   db.del().then(() => res.send('the last restaurant deleted')).catch(err => res.send(err));
-
 });
 
 module.exports = app;

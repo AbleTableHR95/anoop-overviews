@@ -1,33 +1,16 @@
-# CavaTable
+# AbleTable
 
 > Overview module of full-stack webpage clone of OpenTable restaurant webpage
 
 ## Related Projects
 
-  - https://github.com/cava-devs/anoop-menus
-  - https://github.com/cava-devs/vincent-photos
-  - https://github.com/cava-devs/andrew-reservation
-  - https://github.com/cava-devs/chrystal-reviews
-  - https://github.com/cava-devs/anoop-proxy-overviews
-
-## Table of Contents
-
-1. [Usage](#Usage)
-1. [Requirements](#requirements)
-1. [Development](#development)
-
-## Usage
-
-> Some usage instructions
+  - https://github.com/AbleTableHR95/fiona-menus
+  - https://github.com/AbleTableHR95/Ryan-reviews
 
 ## Requirements
 
-An `nvmrc` file is included if using [nvm](https://github.com/creationix/nvm).
-
 - Node 6.13.0
 - etc
-
-## Development
 
 ### Installing Dependencies
 
@@ -35,9 +18,10 @@ From within the root directory:
 
 ```sh
 Run "npm install" to install dependencies.
-Start MongoDB
-Run "npm run build" to build webpack bundle
-Run "npm start" to start the server
-Add "/restaurant/{id}" to the end of the url. (id range is from 1001 to 1100)
+Run "npm start" to build webpack bundle and start the server
+Run "npm run dataGenerate" to generate 1M data
+Start PostgreSQL
+Run "psql -h [hostname] -p [portnumber] -U [username] postgres < schema.sql" to seed data
 ```
+
 
